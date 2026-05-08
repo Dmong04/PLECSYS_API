@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DOMAIN.Entities.PLECSYS_Records
+{
+    public class UserCompanyRequest
+    {
+        public int company_id { get; set; }
+        public string user_id { get; set; } = string.Empty;
+    }
+}
