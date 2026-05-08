@@ -20,7 +20,15 @@ namespace DOMAIN.Entities
 
         public DateTime? Created_at { get; set; }
 
+        [JsonIgnore]
         public ICollection<UserCompany>? Linked_companies { get; set; }
+
+        [JsonIgnore]
+        public ICollection<SmartFlow>? Linked_processes { get; set; }
+
+        [JsonIgnore]
+        public SmartFlow? Approved_Process { get; set; }
+
         [JsonIgnore]
         public ICollection<Invoice>? Invoices { get; set; }
 
