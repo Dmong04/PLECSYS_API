@@ -1,14 +1,12 @@
 using APPLICATION.Handlers;
 using APPLICATION.Handlers.GPS;
-using APPLICATION.Use_cases.Customers_case;
 using APPLICATION.Use_cases.GPS.ItineraryRoutes_case.Registry;
 using APPLICATION.Use_cases.GPS.ItineraryRoutes_case.Tracking_visits;
 using APPLICATION.Use_cases.GPS.SellerRoutes_case;
-using APPLICATION.Use_cases.Items_case;
 using APPLICATION.Use_cases.Login_case;
 using APPLICATION.Utils.GPS;
+using APPLICATION.Utils.JWT;
 using APPLICATION.Utils.PDFs;
-using DOMAIN;
 using DOMAIN.Interfaces;
 using DOMAIN.Interfaces.GPS;
 using FastEndpoints;
@@ -17,9 +15,12 @@ using INFRASTRUCTURE.Context.Mongo;
 using INFRASTRUCTURE.Context.Mongo.Config;
 using INFRASTRUCTURE.Repositories;
 using INFRASTRUCTURE.Repositories.GPS;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,10 +66,7 @@ builder.Services.AddScoped<IPaymentRecordRepository, PaymentRecordRepository>();
 builder.Services.AddScoped<IInvoiceHistoryRepository, InvoiceHistoryRepository>();
 builder.Services.AddScoped<IClaimRepository, ClaimRepository>();
 builder.Services.AddScoped<ISellerLocationTrackingRepository, SellerLocationTrackingRepository>();
-builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ISellerTrackingConfigRepository, SellerTrackingConfigRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISaleOrderRepository, SaleOrderRepository>();
 builder.Services.AddScoped<ISaleOrderDetailsRepository, SaleOrderDetailsRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
@@ -83,13 +81,24 @@ builder.Services.AddScoped<InvoiceHistoryHandler>();
 builder.Services.AddScoped<ClaimHandler>();
 builder.Services.AddScoped<SellerLocationTrackingHandler>();
 builder.Services.AddScoped<SellerTrackingConfigHandler>();
-builder.Services.AddScoped<ProductHandler>();
-builder.Services.AddScoped<SaleOrderDetailsHandler>();
 builder.Services.AddScoped<SupplierHandler>();
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<ICustomerUseCase, CustomerUseCase>();
-builder.Services.AddScoped<IItemRepository, ItemRepository>();
-builder.Services.AddScoped<IItemUseCase, ItemUseCase>();
+builder.Services.AddSingleton<JwtService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]))
+        };
+    });
 
 builder.Services.AddCors(options =>
 {
@@ -97,12 +106,6 @@ builder.Services.AddCors(options =>
     {
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
-});
-
-builder.Services.AddHttpClient("AuthServer", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["AuthServer:BaseUrl"]
-        ?? throw new InvalidOperationException("Falta configurar ExternalApi:BaseUrl"));
 });
 
 

@@ -9,11 +9,7 @@ namespace APPLICATION.Use_cases.Login_case
 
         public decimal? expires_in { get; set; }
 
-        public string? userId { get; set; }
-
         public string? email { get; set; }
-
-        public string? userName { get; set; }
 
         public ICollection<CompanyOption>? linked_companies { get; set; }
 
@@ -32,11 +28,11 @@ namespace APPLICATION.Use_cases.Login_case
 
         public string? smartflow_name { get; set; }
 
-        public string? first_step_id { get; set; }
+        public int first_step_id { get; set; }
 
         public string? first_step_name { get; set; }
 
-        public string? next_step_id { get; set; }
+        public int next_step_id { get; set; }
 
         public string? next_step_name { get; set; }
 

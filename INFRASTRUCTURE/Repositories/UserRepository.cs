@@ -29,6 +29,7 @@ namespace INFRASTRUCTURE.Repositories
         public async Task<User> VerifyUser(string email, string password)
         {
             return await _ctx.Users.Include(u => u.Linked_companies).ThenInclude(uc => uc.Company)
+                .Include(u => u.Linked_processes)
                 .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
         }
 

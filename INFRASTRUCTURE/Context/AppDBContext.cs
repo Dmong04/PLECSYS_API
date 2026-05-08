@@ -36,8 +36,25 @@ namespace INFRASTRUCTURE.Context
                 u.HasMany(u => u.Orders)
                     .WithOne(s => s.User)
                     .HasForeignKey(s => s.User_email);
+                u.HasMany(u => u.Linked_processes)
+                    .WithOne(lc => lc.User)
+                    .HasForeignKey(lc => lc.User_id);
+                u.HasOne(u => u.Approved_Process)
+                    .WithOne(p => p.Approver_user)
+                    .HasForeignKey<SmartFlow>(p => p.Approver);
                 u.Property(u => u.Created_at)
                     .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<SmartFlow>(s =>
+            {
+                s.HasKey(s => s.SmartFlow_id);
+                s.HasOne(s => s.User)
+                    .WithMany(u => u.Linked_processes)
+                    .HasForeignKey(s => s.User_id);
+                s.HasOne(s => s.Approver_user)
+                    .WithOne(u => u.Approved_Process)
+                    .HasForeignKey<SmartFlow>(s => s.Approver);
             });
 
             modelBuilder.Entity<Company>(c =>

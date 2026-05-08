@@ -17,18 +17,23 @@ namespace PLECSYS_PROTOTYPE_API.Endpoints.User
         {
             try
             {
-               /* var logged_in = await _handler.LoginHandler(request);
-                // if (!logged_in.Data.Is_logged)
+               var logged_in = await _handler.LoginHandler(request);
+                if (logged_in.Data is null)
+                {
                     await ResponseBuilder.BuildResponse<LoginResponse>(logged_in.Data, logged_in.Success, logged_in.Message,
                         HttpContext, StatusCodes.Status400BadRequest, ct);
+                    return;
+                }
                 await ResponseBuilder.BuildResponse<LoginResponse>(logged_in.Data, logged_in.Success, logged_in.Message,
-                        HttpContext, StatusCodes.Status200OK, ct);*/
+                        HttpContext, StatusCodes.Status200OK, ct);
+                return;
             }
             catch (Exception ex)
             {
                 await ResponseBuilder.BuildResponse<LoginResponse>(null, false,
                     "Hubo un error al procesar la solicitud: " + ex.Message,
                     HttpContext, StatusCodes.Status500InternalServerError, ct);
+                return;
             }
         }
     }

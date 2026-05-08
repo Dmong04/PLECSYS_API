@@ -1,12 +1,13 @@
 ﻿using APPLICATION.Use_cases.Login_case;
 using APPLICATION.Use_cases.SignUp_case;
 using APPLICATION.Use_cases.Users_case;
+using APPLICATION.Utils.JWT;
 using DOMAIN.Entities;
 using DOMAIN.Interfaces;
 
 namespace APPLICATION.Handlers
 {
-    public class UserHandler(IUserRepository service)
+    public class UserHandler(IUserRepository service, JwtService jwt)
     {
         public async Task<Response<LoginResponse>> LoginHandler(LoginRequestDTO request)
         {
@@ -23,20 +24,26 @@ namespace APPLICATION.Handlers
                     };
                 }
 
-                /*var logged_in = new LoginResponse()
+                var logged_in = new LoginResponse()
                 {
-                    Email = user.Email,
-                    Name = user.Name,
-                    First_lastname = user.First_lastname,
-                    Second_lastname = user.Second_lastname,
-                    Phone = user.Phone,
-                    Created_at = user.Created_at,
-                    Is_logged = true,
-                    Linked_companies = user.Linked_companies?
-                    .Select(uc => new CompanyOption
+                    access_token = jwt.GenerateToken(request.Email),
+                    token_type = "Bearer",
+                    expires_in = 3600,
+                    email = user.Email,
+                    linked_companies = user.Linked_companies?.Select(uc => new CompanyOption
                     {
-                        Company_id = uc.Company.Company_id,
-                        Company_name = uc.Company.Company_name
+                        company_id = uc.Company.Company_id,
+                        company_name = uc.Company.Company_name
+                    }).ToList(),
+                    linked_processes = user.Linked_processes?.Select(up => new SmartFlowOption
+                    {
+                        smartFlow_id = up.SmartFlow_id,
+                        smartflow_name = up.SmartFlow_name,
+                        first_step_id = up.First_step_id,
+                        first_step_name = up.First_step_name,
+                        next_step_id = up.Next_step_id,
+                        next_step_name = up.Next_step_name,
+                        approver = up.Approver
                     }).ToList()
                 };
 
@@ -45,7 +52,7 @@ namespace APPLICATION.Handlers
                     Data = logged_in,
                     Success = true,
                     Message = "Inicio de sesión exitoso"
-                };*/
+                };
 
                 return null;
             }
