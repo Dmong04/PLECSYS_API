@@ -17,5 +17,7 @@ namespace DOMAIN.Interfaces
         Task<List<Invoice>> GetInvoicesByClient(string email);
 
         Task<Invoice?> GetInvoiceForPdfAsync(int invoiceId, CancellationToken ct = default);
+
+        Task<List<Invoice>> GetInvoicesByExpiryDateAndUserEmail(string email, int companyId, DateTime expiryDate);
     }
 }
