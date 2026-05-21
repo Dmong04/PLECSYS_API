@@ -215,6 +215,65 @@ namespace APPLICATION.Handlers
             }
         }
 
+        // ── NUEVO MÉTODO ──────────────────────────────────────────────────────────
+        public async Task<Response<List<InvoiceResponse>>> GetInvoicesByExpiryDateAndUserEmail(
+            string email, int companyId, DateTime expiryDate)
+        {
+            try
+            {
+                var found = await service.GetInvoicesByExpiryDateAndUserEmail(email, companyId, expiryDate);
+                if (found is null || !found.Any())
+                {
+                    return new Response<List<InvoiceResponse>>()
+                    {
+                        Data = [],
+                        Success = false,
+                        Message = "No hay facturas próximas a vencer o vencidas para este usuario y compañía"
+                    };
+                }
+
+                var success = found.Select(i => new InvoiceResponse()
+                {
+                    Invoice_id = i.Invoice_id,
+                    Consecutive = i.Consecutive,
+                    Total_voucher = i.Total_voucher,
+                    User = new User()                        // ← igual que en CreateInvoice
+                    {
+                        Email = i.User.Email,
+                        Name = i.User.Name,
+                        First_lastname = i.User.First_lastname,
+                        Second_lastname = i.User.Second_lastname,
+                        Phone = i.User.Phone,
+                        Created_at = i.User.Created_at,
+                    },
+                    Sell_company = i.Sell_company,
+                    Charged_company = i.Charged_company,
+                    Currency = i.Currency,
+                    Status = i.Status,
+                    Pending_balance = i.Pending_balance,
+                    Created_at = i.Created_at,
+                    Expiry_date = i.Expiry_date              // ← campo propio de este método
+                }).ToList();
+
+                return new Response<List<InvoiceResponse>>()
+                {
+                    Data = success,
+                    Success = true,
+                    Message = "Facturas próximas a vencer o vencidas obtenidas exitosamente"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<InvoiceResponse>>()
+                {
+                    Data = null,
+                    Success = false,
+                    Message = "Ha ocurrido un error: " + ex.Message
+                };
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────────
+
         public async Task<Response<byte[]>> GetInvoicePdf(int invoiceId, CancellationToken ct = default)
         {
             try

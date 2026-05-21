@@ -28,5 +28,7 @@ namespace APPLICATION.Use_cases.Invoices_case
         public decimal? Pending_balance { get; set; }
 
         public DateTime? Created_at { get; set; }
+
+        public DateTime? Expiry_date { get; set; }
     }
 }

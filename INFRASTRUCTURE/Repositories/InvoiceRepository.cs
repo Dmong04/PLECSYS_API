@@ -67,5 +67,21 @@ namespace INFRASTRUCTURE.Repositories
             .ThenInclude(pr => pr.Payment_method).Where(i => i.Sell_company_id == sell_company_id)
             .Where(i => i.Status == "Con reclamo" || i.Status == "Pendiente" || i.Status == "Parcial").ToListAsync();
         }
+
+        public async Task<List<Invoice>> GetInvoicesByExpiryDateAndUserEmail(string email, int companyId, DateTime expiryDate)
+        {
+            return await _ctx.Invoices
+                .Include(i => i.User).Include(i => i.Sell_company)
+                .Include(i => i.Charged_company)
+                .Include(i => i.Currency)
+                .Where(i =>
+                    i.User_creator_id == email &&
+                    i.Sell_company_id == companyId &&
+                    i.Expiry_date != null &&
+                    i.Expiry_date <= expiryDate &&
+                    i.Status != "Pagado")
+                .OrderBy(i => i.Expiry_date)
+                .ToListAsync();
+        }
     }
 }

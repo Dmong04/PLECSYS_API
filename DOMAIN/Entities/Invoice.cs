@@ -40,6 +40,8 @@ namespace DOMAIN.Entities
 
         public DateTime Created_at { get; set; }
 
+        public DateTime Expiry_date { get; set; }
+
         [JsonIgnore]
         public Company? Charged_company { get; set; }
 
