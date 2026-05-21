@@ -7,7 +7,7 @@ namespace INFRASTRUCTURE.Repositories
 {
     public class InvoiceHistoryRepository(AppDBContext _ctx) : IInvoiceHistoryRepository
     {
-        public async Task<List<InvoiceHistory>> GetAllInvoiceHistories()
+        public async Task<List<InvoiceHistory>> GetAllInvoiceHistoriesByUserAndCompanyId(string email, int companyId)
         {
             return await _ctx.InvoiceHistories
                 .AsNoTracking()
@@ -16,6 +16,7 @@ namespace INFRASTRUCTURE.Repositories
                 .Include(h => h.PaymentRecord)
                 .Include(h => h.Claim)
                 .OrderByDescending(h => h.Record_date)
+                .Where(h => h.Invoice.User_creator_id == email && h.Invoice.Sell_company_id == companyId)
                 .ToListAsync();
         }
 
