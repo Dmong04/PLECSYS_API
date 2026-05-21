@@ -1,22 +1,14 @@
 ﻿using APPLICATION.Use_cases.InvoiceHistories_case;
-using APPLICATION.Use_cases.PaymentRecords_case;
-using DOMAIN.Entities;
 using DOMAIN.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace APPLICATION.Handlers
 {
     public class InvoiceHistoryHandler(IInvoiceHistoryRepository service, IPaymentRecordRepository paymentService, IClaimRepository claimService, IInvoiceRepository invoiceService)
     {
-        public async Task<Response<List<InvoiceHistoryResponse>>> GetAllInvoiceHistories()
+        public async Task<Response<List<InvoiceHistoryResponse>>> GetAllInvoiceHistoriesByUserAndCompanyId(FindHistoriesRequest request)
         {
             try
             {
-                var invoice_histories = await service.GetAllInvoiceHistories();
+                var invoice_histories = await service.GetAllInvoiceHistoriesByUserAndCompanyId(request.Email, request.CompanyId);
                 if (invoice_histories.Count is 0)
                 {
                     return new Response<List<InvoiceHistoryResponse>>()

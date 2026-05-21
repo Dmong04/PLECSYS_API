@@ -9,7 +9,7 @@ namespace DOMAIN.Interfaces
 {
     public interface IInvoiceHistoryRepository
     {
-        Task<List<InvoiceHistory>> GetAllInvoiceHistories();
+        Task<List<InvoiceHistory>> GetAllInvoiceHistoriesByUserAndCompanyId(string email, int companyId);
 
         Task<InvoiceHistory> CreateHistory(InvoiceHistory history);
 
