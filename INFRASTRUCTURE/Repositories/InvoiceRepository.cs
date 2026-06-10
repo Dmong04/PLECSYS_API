@@ -22,10 +22,12 @@ namespace INFRASTRUCTURE.Repositories
             return success;
         }
 
-        public async Task<List<Invoice>> GetAllInvoices()
+        public async Task<List<Invoice>> GetAllInvoices(string email, int companyId)
         {
             return await _ctx.Invoices.Include(i => i.User).Include(i => i.Sell_company)
-                .Include(i => i.Charged_company).Include(i => i.Currency).ToListAsync();
+                .Include(i => i.Charged_company).Include(i => i.Currency)
+                .Where(i => i.User.Email == email && i.Sell_company_id == companyId)
+                .ToListAsync();
         }
 
         public async Task<List<Invoice>> GetInvoicesByClient(string email)
