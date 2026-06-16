@@ -1,11 +1,6 @@
 ﻿using APPLICATION.Use_cases.PaymentRecords_case;
 using DOMAIN.Entities;
 using DOMAIN.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APPLICATION.Handlers
 {
@@ -42,6 +37,14 @@ namespace APPLICATION.Handlers
                         Data = null,
                         Success = false,
                         Message = "Debe agregar un detalle válido para la opción de método de pago 'OTRO'."
+                    };
+
+                if (request.Paid_amount > invoice.Pending_balance)
+                    return new Response<PaymentRecordResponse>
+                    {
+                        Data = null,
+                        Success = false,
+                        Message = "El monto pagado no puede ser mayor al saldo pendiente de la factura."
                     };
 
                 // d) Construir el registro de pago

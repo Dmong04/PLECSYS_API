@@ -76,11 +76,11 @@ namespace APPLICATION.Handlers
             }
         }
 
-        public async Task<Response<List<InvoiceResponse>>> GetAllInvoices()
+        public async Task<Response<List<InvoiceResponse>>> GetAllInvoices(GetInvoicesRequest request)
         {
             try
             {
-                var invoices = await service.GetAllInvoices();
+                var invoices = await service.GetAllInvoices(request.Email, request.CompanyId);
                 if (invoices is null || !invoices.Any())
                 {
                     return new Response<List<InvoiceResponse>>()

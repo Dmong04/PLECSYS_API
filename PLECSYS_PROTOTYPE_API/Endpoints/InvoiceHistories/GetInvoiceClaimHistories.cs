@@ -21,14 +21,9 @@ namespace PLECSYS_PROTOTYPE_API.Endpoints.InvoiceHistories
 
                 var histories = await _handler.GetInvoiceClaimsHistories(invoiceId);
 
-                if (histories is null || histories.Data is null || !histories.Data.Any())
-                {
-                    await ResponseBuilder.BuildResponse<List<InvoiceHistoryResponse>>(null, false,
-                        "No hay registros de historial de reclamaciones en el servidor", HttpContext, StatusCodes.Status200OK, ct);
-                    return;
-                }
-                await ResponseBuilder.BuildResponse<List<InvoiceHistoryResponse>>(histories.Data, true,
-                    "Historial de reclamaciones de la factura obtenido exitosamente", HttpContext, StatusCodes.Status200OK, ct);
+                await ResponseBuilder.BuildResponse<List<InvoiceHistoryResponse>>(histories.Data, histories.Success,
+                        histories.Message, HttpContext, StatusCodes.Status200OK, ct);
+                return;
             }
             catch (Exception ex)
             {

@@ -4,7 +4,7 @@ namespace DOMAIN.Interfaces
 {
     public interface IInvoiceRepository
     {
-        Task<List<Invoice>> GetAllInvoices();
+        Task<List<Invoice>> GetAllInvoices(string email, int companyId);
 
         Task<List<Invoice>> GetInvoicesBySellCompany(int sell_company_id);
 
