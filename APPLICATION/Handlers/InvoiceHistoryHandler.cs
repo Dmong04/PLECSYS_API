@@ -155,7 +155,6 @@ namespace APPLICATION.Handlers
         {
             try
             {
-                // Obtener la factura y validar existencia
                 var invoice = await invoiceService.GetInvoiceById(invoice_id);
                 if (invoice is null)
                 {
@@ -164,17 +163,6 @@ namespace APPLICATION.Handlers
                         Data = [],
                         Success = false,
                         Message = "No se encontró la factura solicitada."
-                    };
-                }
-
-                // Verificar si la factura tiene el estado que indica pago
-                if (!string.Equals(invoice.Status, "Pagado", StringComparison.OrdinalIgnoreCase))
-                {
-                    return new Response<List<InvoiceHistoryResponse>>()
-                    {
-                        Data = [],
-                        Success = false,
-                        Message = $"La factura no está en estado 'Pagado'. Estado actual: '{invoice.Status ?? "Sin estado"}'."
                     };
                 }
 
@@ -193,7 +181,6 @@ namespace APPLICATION.Handlers
                     };
                 }
 
-                // Mapear cada payment record a InvoiceHistoryResponse para la UI
                 var success = payments.Select(p => new InvoiceHistoryResponse()
                 {
                     Invoice_history_id = null,
